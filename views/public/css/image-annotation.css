@@ -1,3 +1,8 @@
+.hidering 
+{    position: absolute !important;
+   top: -9999px !important;
+   left: -9999px !important; }
+
 #image-annotate-no-annotations {
     margin-top: 30px;
     font-size: 12px;
