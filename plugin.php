@@ -174,7 +174,7 @@ function image_annotation_display_annotated_image_gallery_for_item($item=null, $
 	while(loop_files_for_item($item)) {
         $file = get_current_file();
         if ($file->hasThumbnail()) {
-			$html .= '<li><a id="annotatehide' . $file->id .'"" href="#annotated-images-file-'.$file->id.'">';
+			$html .= '<li><a accesskey="a" id="annotatehide' . $file->id .'"" href="#annotated-images-file-'.$file->id.'">';
 			$html .= display_file($file, array('imageSize' => 'square_thumbnail', 'linkToFile' => false));
 			$html .= '</a></li>';
         }
