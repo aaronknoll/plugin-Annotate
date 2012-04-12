@@ -9,6 +9,7 @@
 
 define('IMAGE_ANNOTATION_PLUGIN_DIR', dirname(__FILE__));
  
+ 
 add_plugin_hook('install', 'image_annotation_install');
 add_plugin_hook('uninstall', 'image_annotation_uninstall');
 add_plugin_hook('define_routes', 'image_annotation_routes');
