@@ -9,7 +9,6 @@
 
 define('IMAGE_ANNOTATION_PLUGIN_DIR', dirname(__FILE__));
  
- 
 add_plugin_hook('install', 'image_annotation_install');
 add_plugin_hook('uninstall', 'image_annotation_uninstall');
 add_plugin_hook('define_routes', 'image_annotation_routes');
@@ -25,17 +24,9 @@ add_plugin_hook('public_append_to_items_show', 'make_annotation_appear');
 
 require_once(IMAGE_ANNOTATION_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'permissions-manager.php');
 
-
 function make_annotation_appear()
 	{
-
-	
-		echo '<a id="inline" href="#data">This shows content of element who has id="data"</a>
-
-<div style="display:none"><div id="data">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div></div>';
-		
-		
-		echo image_annotation_display_annotated_image_gallery_for_item();
+	echo image_annotation_display_annotated_image_gallery_for_item();
 	?>
 	<script type="text/javascript">
 	jQuery(document).ready(function() {
@@ -128,15 +119,16 @@ function image_annotation_admin_navigation($tabs)
 function image_annotation_header($request) 
 {
     if ($request->getControllerName() == 'items' && $request->getActionName() == 'show') {
-        queue_js('jquery.annotate');
+       
+	    queue_js('jquery.annotate');
         queue_css('image-annotation');
+		if(!stristr($_SERVER['REQUEST_URI'], 'admin')){
 		//adding the fancy box for the popup annotations view
+		queue_css('public-annotate');
 		queue_js('jquery.fancybox-1.3.4.pack');
 		queue_css('jquery.fancybox-1.3.4');
-		//queue_js('jquery-1.4.3.min');
-		//queue_js('onload');
+		}
     }
-
 }
 
 /**
@@ -167,51 +159,76 @@ function image_annotation_display_annotated_image_gallery_for_item($item=null, $
     
     if (!$item->hasThumbnail()) {
         return '';
-    }   
-    
+    } 
+	
+if(!stristr($_SERVER['REQUEST_URI'], 'admin')){  
+// beginning of aaron code insert    
     $html = '';
-	$html .= '<div class="annotated-images" id="annotated-images-' . $item->id . '">';
-	$html .= '<ul class="annotated-images-thumbs" id="annotated-images-thumbs-' . $item->id . '">';
+	$html .= '<div style="background: transparent;" class="annotated-images" id="annotated-images-' . $item->id . '">';
+	//$html .= '<ul class="annotated-images-thumbs" id="annotated-images-thumbs-' . $item->id . '">';
 	while(loop_files_for_item($item)) {
         $file = get_current_file();
         if ($file->hasThumbnail()) {
-			$html .= '<li><a accesskey="a" id="annotatehide' . $file->id .'"" href="#annotated-images-file-'.$file->id.'">';
-			$html .= display_file($file, array('imageSize' => 'square_thumbnail', 'linkToFile' => false));
-			$html .= '</a></li>';
+			$html .= '<a style="background:transparent;"  accesskey="a" id="annotatehide' . $file->id .'" href="#annotated-images-file-'.$file->id.'">';
+			//$html .= display_file($file, array('imageSize' => 'square_thumbnail', 'linkToFile' => false));
+			$html .= '<img name="View Annotations" alt="Annotation Icon" src="'. WEB_PLUGIN .'/ImageAnnotation/views/shared/images/annotation.png">';
+			$html .= '</a>';
         }
     }
-	$html .= '</ul>';
+	//$html .= '</ul>';
+}
+else {
+	// beginning of aaron code insert    
+    $html = '';
+	$html .= '<div style="background: transparent; width:800px;" class="annotated-images" id="annotated-images-' . $item->id . '">';
+	//$html .= '<ul class="annotated-images-thumbs" id="annotated-images-thumbs-' . $item->id . '">';
+	while(loop_files_for_item($item)) {
+        $file = get_current_file();
+        if ($file->hasThumbnail()) {
+			$html .= '';
+			//$html .= display_file($file, array('imageSize' => 'square_thumbnail', 'linkToFile' => false));
+			$html .= '';
+			$html .= '';
+        }
+    }
+	//$html .= '</ul>';
+} 
 	
 
 	
-	$html .= '<div class="annotated-images-fullsize" id="annotated-images-fullsize-' . $item->id . '">';
+
 	while(loop_files_for_item($item)) {
         $file = get_current_file();
         if ($file->hasThumbnail()) {
-    		//the beginning of the fancy box div to hide the annotation until clickover
+		//the beginning of the fancy box div to hide the annotation until clickover
+			if(!stristr($_SERVER['REQUEST_URI'], 'admin')){
 			$html .= '<div class="hidering">';
-			$html .= '<div id="annotatehide' . $file->id .'"">';	
+			$html .= '<div id="annotatehide' . $file->id .'">';	
+			}
 			//beginning
 			
 			$html .= '<div class="annotated-images-file" id="annotated-images-file-' . $file->id .'">';
             $html .= image_annotation_display_annotated_image($file, $isEditable);
 			$html .= '</div>';
 			
-			//the end of the fancybox hiding div
-			$html .= '</div>';
-			$html .=	'
-				<script type="text/javascript">
-				jQuery(document).ready(function() {
-				jQuery(annotatehide'. $file->id .').fancybox({
-					"hideOnContentClick": true
-				});
-				});
-				</script>
-				';
-			//ending
-			
+				//the end of the fancybox hiding div
+				if(!stristr($_SERVER['REQUEST_URI'], 'admin')){
+				$html .= '</div>';
+				$html .=	'
+					<script type="text/javascript">
+					jQuery(document).ready(function() {
+					jQuery("#annotatehide'. $file->id .'").fancybox({
+						
+					});
+					});
+					</script>
+					';
+				//ending
+				}	
         }
     }
+// end of aaron code insert
+
 	$html .= '</div>';
 	$html .= '</div>';
 	ob_start();
@@ -265,7 +282,6 @@ function image_annotation_display_annotated_image($imageFile, $isEditable=false,
     ob_start();
 ?>
 <script language="javascript">
-
     jQuery(window).load(function() {
         jQuery('.annotated-images img.full').annotateImage(<?php echo json_encode($fileAnnotations); ?>);        
     });
