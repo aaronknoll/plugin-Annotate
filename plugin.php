@@ -205,8 +205,8 @@ else {
 			$html .= '<div class="hidering">';
 			$html .= '<div id="annotatehide' . $file->id .'">';	
 			}
-			//beginning
 			
+
 			$html .= '<div class="annotated-images-file" id="annotated-images-file-' . $file->id .'">';
             $html .= image_annotation_display_annotated_image($file, $isEditable);
 			$html .= '</div>';
@@ -279,9 +279,16 @@ function image_annotation_display_annotated_image($imageFile, $isEditable=false,
         'deleteUrl' => $ajaxPath . "delete-annotation/file_id/" . $imageId . '/',  
         'useAjax' => ($useAjax ? 'true': 'false')   
     );
+			//beginning
+			if(!stristr($_SERVER['REQUEST_URI'], 'admin')){
+			$fileAnnotations = array(  'editable' => 'false');
+			}
+	
     ob_start();
+
 ?>
 <script language="javascript">
+
     jQuery(window).load(function() {
         jQuery('.annotated-images img.full').annotateImage(<?php echo json_encode($fileAnnotations); ?>);        
     });
