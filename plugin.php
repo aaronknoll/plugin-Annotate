@@ -169,7 +169,7 @@ if(!stristr($_SERVER['REQUEST_URI'], 'admin')){
 	while(loop_files_for_item($item)) {
         $file = get_current_file();
         if ($file->hasThumbnail()) {
-			$html .= '<a style="background:transparent;"  accesskey="a" id="annotatehide' . $file->id .'" href="#annotated-images-file-'.$file->id.'">';
+			$html .= '<a style="background:transparent;"  title="View Annotations for this image" accesskey="a" id="annotatehide' . $file->id .'" href="#annotated-images-file-'.$file->id.'">';
 			//$html .= display_file($file, array('imageSize' => 'square_thumbnail', 'linkToFile' => false));
 			$html .= '<img name="View Annotations" alt="Annotation Icon" src="'. WEB_PLUGIN .'/ImageAnnotation/views/shared/images/annotation.png">';
 			$html .= '</a>';
@@ -279,10 +279,11 @@ function image_annotation_display_annotated_image($imageFile, $isEditable=false,
         'deleteUrl' => $ajaxPath . "delete-annotation/file_id/" . $imageId . '/',  
         'useAjax' => ($useAjax ? 'true': 'false')   
     );
+			//atempt to make the "add annotations" button disappear from the front end.
 			//beginning
-			if(!stristr($_SERVER['REQUEST_URI'], 'admin')){
-			$fileAnnotations = array(  'editable' => 'false');
-			}
+			//if(!stristr($_SERVER['REQUEST_URI'], 'admin')){
+			//$fileAnnotations = array(  'editable' => 'false');
+			//}
 	
     ob_start();
 
